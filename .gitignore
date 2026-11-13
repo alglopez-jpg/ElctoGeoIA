@@ -12,3 +12,7 @@ __pycache__/
 
 # Sistema
 .DS_Store
+
+# Datos brutos subidos por el usuario / descargados (regenerables)
+data/upload/*
+!data/upload/.gitkeep
