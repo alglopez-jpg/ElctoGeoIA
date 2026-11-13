@@ -1,0 +1,14 @@
+# Datos brutos descargables (regenerables con src/descarga_datos.py)
+data/raw/*
+data/geo/*
+!data/raw/.gitkeep
+!data/geo/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+
+# Sistema
+.DS_Store
