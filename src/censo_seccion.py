@@ -60,8 +60,14 @@ def procesar_entidad(ent, maestro):
     if not (os.path.exists(csv_zip) and os.path.exists(mza_json)):
         return None
     z = zipfile.ZipFile(csv_zip)
-    name = [n for n in z.namelist() if n.endswith(".csv") and "conjunto" in n][0]
-    cen = pd.read_csv(z.open(name), low_memory=False)
+    name = [n for n in z.namelist() if n.endswith(".csv")
+            and "conjunto" in n and "bitacora" not in n
+            and "diccionario" not in n][0]
+    try:
+        cen = pd.read_csv(z.open(name), low_memory=False)
+    except UnicodeDecodeError:
+        cen = pd.read_csv(z.open(name), low_memory=False,
+                          encoding="latin-1")
     cen = cen[cen["MZA"].astype(str).str.strip() != "000"]
     cen["MZA"] = cen["MZA"].astype(str).str.strip().str.zfill(3)
     cen["AGEB"] = cen["AGEB"].astype(str).str.strip()
@@ -102,6 +108,7 @@ def main():
         except Exception as ex:
             print(f"[{ent}] ERROR: {str(ex)[:80]}")
     censo = pd.concat(partes).groupby(level=0).sum()
+    censo = censo.rename(columns=VARS_CONTEO)
     censo.to_csv(os.path.join(PROCESSED, "censo2020_seccion_conteos.csv"))
     print(f"\nTotal: {len(censo):,} secciones con censo urbano")
 

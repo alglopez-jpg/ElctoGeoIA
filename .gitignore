@@ -16,3 +16,5 @@ __pycache__/
 # Datos brutos subidos por el usuario / descargados (regenerables)
 data/upload/*
 !data/upload/.gitkeep
+data/processed/panel_secciones.csv
+data/processed/panel_secciones.gpkg
