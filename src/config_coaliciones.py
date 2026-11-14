@@ -7,6 +7,19 @@ Regla general (documentada y discutible):
   de registro, que pueden sustituirse aquí cuando se conozcan.
 - Partidos desaparecidos o sin continuidad -> columna "otros".
 
+NOTAS DE REVISIÓN (opción C, nov-2026):
+1. En diputados MR cada candidato de coalición es postulado por un partido
+   específico en cada distrito (p. ej. 2024: 143 Morena, 71 PVEM, 43 PT),
+   y las coaliciones son PARCIALES por distrito. El mapa
+   data/processed/mapa_distrito_coaliciones.csv documenta qué emblemas de
+   coalición corrieron en cada distrito (2018/2021/2024), construido desde
+   los archivos de candidaturas de los cómputos del INE. La agregación por
+   columna ya es correcta: los votos de cada columna solo existen en los
+   distritos donde esa combinación compitió.
+2. Para modelar, considérese también el nivel BLOQUE (coalición agregada),
+   inmune a los supuestos de reparto: oficialismo = morena+pvem+pt;
+   oposición tradicional = pan+pri+prd.
+
 Cada entrada: {columna_del_csv: {partido: peso}}. Las columnas de partidos
 suelos se mapean 1:1 (implícito).
 """

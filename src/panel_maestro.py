@@ -48,7 +48,7 @@ def main():
             v["lista_nominal"].replace(0, np.nan)
 
     print("[3/3] Indicadores censales 2020...")
-    ind = pd.read_csv(os.path.join(PROCESSED, "censo2020_seccion_indicadores.csv"),
+    ind = pd.read_csv(os.path.join(PROCESSED, "censo2020_seccion_indicadores_total.csv"),
                       index_col=0)
     ind.index = ind.index.astype(str).str.zfill(6)
     panel = panel.join(ind)
