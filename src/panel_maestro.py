@@ -53,6 +53,37 @@ def main():
     ind.index = ind.index.astype(str).str.zfill(6)
     panel = panel.join(ind)
 
+    print("[4/5] Tipología de secciones (2024)...")
+    partidos = PARTIDOS
+    P = panel[[f"pct_{p}_2024" for p in partidos]].fillna(0).copy()
+    P.columns = partidos
+    panel["ganador_2024"] = P.idxmax(axis=1)
+    panel["margen_2024"] = P.max(axis=1) - \
+        P.apply(lambda r: r.drop(r.idxmax()).max(), axis=1)
+    panel["volatilidad_18_24"] = (
+        (panel["pct_morena_2024"] - panel["pct_morena_2018"]).abs() +
+        (panel["pct_pan_2024"] - panel["pct_pan_2018"]).abs() +
+        (panel["pct_mc_2024"] - panel["pct_mc_2018"]).abs())
+
+    def tipologia(fila):
+        if fila["margen_2024"] < 5:
+            return "competitiva"
+        if fila["ganador_2024"] in ("morena", "pvem", "pt") and \
+                fila["margen_2024"] >= 20:
+            return "bastion_oficialista"
+        if fila["ganador_2024"] in ("pan", "pri", "prd") and \
+                fila["margen_2024"] >= 20:
+            return "bastion_oposicion"
+        return "dominante_moderada"
+    panel["tipologia_2024"] = panel.apply(tipologia, axis=1)
+
+    print("[5/5] Pronóstico 2027 (si existe)...")
+    ruta_pron = os.path.join(PROCESSED, "pronostico_2027_seccion.csv")
+    if os.path.exists(ruta_pron):
+        pron = pd.read_csv(ruta_pron, dtype={"id": str}).set_index("id")
+        panel = panel.join(pron)
+        print(f"    pronóstico incorporado: +{pron.shape[1]} columnas")
+
     panel.to_csv(os.path.join(PROCESSED, "panel_secciones.csv"),
                  encoding="utf-8")
     master.merge(panel.reset_index(), on="id").to_file(
