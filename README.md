@@ -66,3 +66,19 @@ oposición 27.8% (PAN 16.1 + PRI 11.2 + PRD 0.5), MC 14.0%.
   dado un escenario nacional
 - **No**: el nivel nacional (es escenario, no predicción), el voto a
   partidos nuevos (PAZ, Somos México) ni efectos de nuevas coaliciones
+
+## Fase 4 (opción A) — Exploración del panel de secciones (`notebooks/06_exploracion_panel_secciones.ipynb`)
+
+- **Moran's I del voto a Morena a nivel sección: 0.747** — el voto está
+  fuertemente agrupado espacialmente; LISA identifica 14,886 secciones en
+  clusters Alto-Alto (bastiones) y 16,013 en Bajo-Bajo (oposición).
+- **Tipología de secciones (2024)**: 35,359 bastiones oficialistas,
+  22,446 dominantes moderadas, 9,160 competitivas (<5 pts de margen) y
+  4,576 bastiones de oposición; cruzada con volatilidad 2018→2024.
+- **Correlaciones voto-censo fino** (escala sección, la más fina posible):
+  Morena vs sin educación básica ρ≈+0.31; PAN vs automóvil ρ≈+0.4;
+  MC vs internet ρ≈+0.35.
+- Swing territorial 2018→2024 y panoramas de voto/participación por sección.
+- **Nota metodológica**: participación >100% en algunas secciones refleja
+  votos emitidos fuera de la sección de la lista nominal (traslados);
+  documentado como límite de los cómputos por casilla.
