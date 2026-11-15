@@ -1,0 +1,3 @@
+# Dependencias del agente ElctoGeoIA
+# (el chat usa urllib de la biblioteca estándar; solo se requiere pandas)
+pandas>=2.0

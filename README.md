@@ -170,6 +170,23 @@ python src/backtest.py && python src/pronostico_2027.py
 jupyter lab notebooks/
 ```
 
+## Agente experto local (opcional)
+
+El proyecto incluye un **agente conversacional que corre 100% local** (Ollama +
+modelo pequeño) y responde preguntas en lenguaje natural ejecutando el análisis
+real del panel: radiografías por municipio o distrito federal, pronóstico 2027
+por escenario y secciones prioritarias de campaña.
+
+```powershell
+ollama pull qwen2.5:7b
+pip install -r agente/requisitos.txt
+python -m agente.orquestador          # chat
+python -m agente.orquestador --demo   # prueba de herramientas sin LLM
+```
+
+Ver [`agente/README.md`](agente/README.md) para la guía completa
+(requisitos de hardware, elección de modelo y arquitectura).
+
 ## Referencias
 
 - Anselin, L. (1995). *Local Indicators of Spatial Association—LISA*.
