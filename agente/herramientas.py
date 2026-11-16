@@ -135,6 +135,16 @@ def pronostico_2027(nombre_municipio: str, estado: str | None = None,
         col = f"{escenario}_{partido}"
         if col in df:
             out[nombres[partido]] = round(float(df[col].mean()) * 100, 1)  # fracción -> %
+    # nombres completos oficiales: el LLM NO debe expandir siglas de memoria
+    out["nombres_completos"] = {
+        "PAN": "Partido Acción Nacional", "PRI": "Partido Revolucionario Institucional",
+        "PRD": "Partido de la Revolución Democrática",
+        "PVEM (Verde)": "Partido Verde Ecologista de México",
+        "PT": "Partido del Trabajo", "MC (Movimiento Ciudadano)": "Movimiento Ciudadano",
+        "Morena": "Morena", "otros": "otros partidos/candidaturas no registradas"}
+    abst = out.get("abstencion")
+    if abst is not None:
+        out["participacion_esperada_pct"] = round(100 - abst, 1)
     # secciones competitivas bajo el escenario
     oficialismo = P.PARTIDOS[:6] + ["otros"]
     cols_of = [f"{escenario}_{p}" for p in oficialismo if f"{escenario}_{p}" in df]

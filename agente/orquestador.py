@@ -47,6 +47,10 @@ REGLAS:
      ninguna); usa los nombres de partido tal como vienen en el resultado.
    - Los pronósticos 2027 son % sobre lista nominal: presenta la abstención por
      separado y aclara que no son % del voto emitido.
+   - NUNCA expandas siglas de partidos desde tu memoria: si el resultado trae un
+     campo 'nombres_completos', usa ESE mapeo. Si solo hay siglas, deja las siglas.
+   - No calcules derivados que la herramienta ya entrega (p. ej.
+     'participacion_esperada_pct'); usa el valor provisto.
 5. Sé honesto con la incertidumbre: los pronósticos 2027 son escenarios, no certezas;
    la validación (backtest) mostró que el swing uniforme es la mejor referencia.
 """
