@@ -121,11 +121,20 @@ def pronostico_2027(nombre_municipio: str, estado: str | None = None,
     df = P.secciones_de_municipio(h["ent"], h["mun"])
     if df.empty:
         return {"error": "Sin secciones para ese municipio."}
-    out = {"territorio": f"{h['nom_mun']}, {h['nom_ent']}", "escenario": escenario}
+    # nombres completos para que el LLM no confunda siglas (PRI vs PRD)
+    nombres = {"pan": "PAN", "pri": "PRI", "prd": "PRD", "pvem": "PVEM (Verde)",
+               "pt": "PT", "mc": "MC (Movimiento Ciudadano)",
+               "morena": "Morena", "otros": "otros", "nulos": "votos nulos",
+               "abstencion": "abstencion"}
+    out = {"territorio": f"{h['nom_mun']}, {h['nom_ent']}", "escenario": escenario,
+           "unidad": "porcentaje sobre lista nominal (partidos + nulos + abstencion suman 100)",
+           "advertencia": "Estas cifras son porcentaje de la lista nominal, NO del "
+                          "voto emitido. Para % del voto emitido, excluye la abstencion "
+                          "y renormaliza. Presenta siempre la abstencion por separado."}
     for partido in P.PARTIDOS + ["nulos", "abstencion"]:
         col = f"{escenario}_{partido}"
         if col in df:
-            out[partido] = round(float(df[col].mean()) * 100, 1)  # fracción -> %
+            out[nombres[partido]] = round(float(df[col].mean()) * 100, 1)  # fracción -> %
     # secciones competitivas bajo el escenario
     oficialismo = P.PARTIDOS[:6] + ["otros"]
     cols_of = [f"{escenario}_{p}" for p in oficialismo if f"{escenario}_{p}" in df]

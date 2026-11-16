@@ -43,6 +43,10 @@ REGLAS:
    - Usa las definiciones incluidas en los resultados: 'margen_2024' es la diferencia
      entre 1er y 2do lugar, NO participación; 'volatilidad_18_24' es cambio entre años.
    - Si un dato no viene en el resultado, di que no está disponible; no lo estimes.
+   - Menciona TODAS las cifras de partidos que devuelva la herramienta (no omitas
+     ninguna); usa los nombres de partido tal como vienen en el resultado.
+   - Los pronósticos 2027 son % sobre lista nominal: presenta la abstención por
+     separado y aclara que no son % del voto emitido.
 5. Sé honesto con la incertidumbre: los pronósticos 2027 son escenarios, no certezas;
    la validación (backtest) mostró que el swing uniforme es la mejor referencia.
 """
