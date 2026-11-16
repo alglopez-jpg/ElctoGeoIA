@@ -37,6 +37,11 @@ def _resumen_territorio(df: pd.DataFrame, nombre: str) -> dict:
     # tipología
     tip = df["tipologia_2024"].value_counts().to_dict()
     out["tipologia"] = {k: int(v) for k, v in tip.items()}
+    # categoría SAR (desviación vs perfil socioeconómico, notebook 07)
+    if "categoria_sar" in df:
+        sar = df["categoria_sar"].value_counts().to_dict()
+        out["desviacion_sar"] = {k: int(v) for k, v in sar.items()
+                                if k != "sin_sar"}
     out["margen_2024_promedio_pts"] = round(float(df["margen_2024"].mean()), 1)
     out["volatilidad_18_24_promedio_pts"] = round(float(df["volatilidad_18_24"].mean()), 1)
     # socioeconomía (ya en porcentaje)

@@ -31,7 +31,7 @@ el modelo SAR supera a MCO (AIC 18,870 vs 19,524).
 ## Fase 2 — Panel de secciones electorales (2012-2024)
 
 **Archivo central**: `data/processed/comprimidos/panel_secciones.csv.gz`
-— **71,541 secciones (marco INE 2024) × 150 columnas**. El GeoPackage para
+— **71,541 secciones (marco INE 2024) × 151 columnas**. El GeoPackage para
 QGIS se regenera con `python src/panel_maestro.py` (~260 MB, no se versiona).
 
 ### Pipeline

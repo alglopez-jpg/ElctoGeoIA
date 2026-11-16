@@ -26,11 +26,11 @@ def cargar_maestro():
 
 
 def main():
-    print("[1/3] Cartografía maestra...")
+    print("[1/6] Cartografía maestra...")
     master = cargar_maestro()
     panel = master.drop(columns="geometry").set_index("id")
 
-    print("[2/3] Votos armonizados por año...")
+    print("[2/6] Votos armonizados por año...")
     for anio in ANIOS:
         v = pd.read_csv(
             os.path.join(PROCESSED, f"votos_seccion_{anio}_m2024.csv"),
@@ -47,13 +47,13 @@ def main():
         panel[f"participacion_{anio}"] = 100 * v["total_votos"] / \
             v["lista_nominal"].replace(0, np.nan)
 
-    print("[3/3] Indicadores censales 2020...")
+    print("[3/6] Indicadores censales 2020...")
     ind = pd.read_csv(os.path.join(PROCESSED, "censo2020_seccion_indicadores_total.csv"),
                       index_col=0)
     ind.index = ind.index.astype(str).str.zfill(6)
     panel = panel.join(ind)
 
-    print("[4/5] Tipología de secciones (2024)...")
+    print("[4/6] Tipología de secciones (2024)...")
     partidos = PARTIDOS
     P = panel[[f"pct_{p}_2024" for p in partidos]].fillna(0).copy()
     P.columns = partidos
@@ -77,12 +77,23 @@ def main():
         return "dominante_moderada"
     panel["tipologia_2024"] = panel.apply(tipologia, axis=1)
 
-    print("[5/5] Pronóstico 2027 (si existe)...")
+    print("[5/6] Pronóstico 2027 (si existe)...")
     ruta_pron = os.path.join(PROCESSED, "pronostico_2027_seccion.csv")
     if os.path.exists(ruta_pron):
         pron = pd.read_csv(ruta_pron, dtype={"id": str}).set_index("id")
         panel = panel.join(pron)
         print(f"    pronóstico incorporado: +{pron.shape[1]} columnas")
+
+    print("[6/6] Categoría SAR (si existe)...")
+    ruta_sar = os.path.join(PROCESSED, "sar_residuales_seccion.csv")
+    if os.path.exists(ruta_sar):
+        sar = pd.read_csv(ruta_sar, dtype={"id": str})[["id", "categoria_sar"]]
+        sar = sar.set_index("id").rename(columns={"categoria_sar": "categoria_sar"})
+        panel = panel.join(sar["categoria_sar"])
+        # secciones sin modelo SAR (sin censo desagregado)
+        panel["categoria_sar"] = panel["categoria_sar"].fillna("sin_sar")
+        print(f"    categoria_sar incorporada: "
+              f"{panel['categoria_sar'].value_counts().to_dict()}")
 
     panel.to_csv(os.path.join(PROCESSED, "panel_secciones.csv"),
                  encoding="utf-8")
