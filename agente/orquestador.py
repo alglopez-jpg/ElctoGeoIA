@@ -98,10 +98,16 @@ def bucle_chat(modelo: str):
             for lc in llamadas:
                 fn = lc.get("function", {})
                 nombre = fn.get("name", "")
-                try:
-                    args = json.loads(fn.get("arguments", "{}"))
-                except json.JSONDecodeError:
-                    args = {}
+                args_crudos = fn.get("arguments", {})
+                # Ollama puede devolver arguments como dict ya procesado
+                # o como texto JSON, según versión del modelo/plantilla
+                if isinstance(args_crudos, dict):
+                    args = args_crudos
+                else:
+                    try:
+                        args = json.loads(args_crudos or "{}")
+                    except (json.JSONDecodeError, TypeError):
+                        args = {}
                 print(f"  [herramienta] {nombre}({args})")
                 resultado = ejecutar_herramienta(nombre, args)
                 mensajes.append({"role": "tool", "content": json.dumps(resultado, ensure_ascii=False)})
