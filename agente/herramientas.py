@@ -80,16 +80,10 @@ def radiografia_distrito(estado: str, distrito: int | str) -> dict:
         distrito: número de distrito federal (1-300)
     """
     cat = P.cargar_catalogo()
-    e = str(estado)
-    if e.isdigit() and len(e) == 2:
-        ent = e.zfill(2)
-        nom_ent = cat.loc[cat["ent"] == ent, "nom_ent"].iloc[0]
-    else:
-        m = cat["nom_ent_norm"] == P._norm(estado)
-        if not m.any():
-            return {"error": f"No encontré el estado '{estado}'."}
-        ent = cat.loc[m, "ent"].iloc[0]
-        nom_ent = cat.loc[m, "nom_ent"].iloc[0]
+    ent = P._resolver_estado(str(estado))
+    if ent is None:
+        return {"error": f"No encontré el estado '{estado}'."}
+    nom_ent = cat.loc[cat["ent"] == ent, "nom_ent"].iloc[0]
     df = P.secciones_de_distrito(ent, distrito)
     out = _resumen_territorio(df, f"Distrito {int(distrito)}, {nom_ent}")
     if "error" not in out:

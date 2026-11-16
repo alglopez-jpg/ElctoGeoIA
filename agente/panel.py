@@ -63,11 +63,32 @@ def cargar_catalogo() -> pd.DataFrame:
     return cat
 
 
+def _resolver_estado(estado: str) -> str | None:
+    """Convierte nombre/abreviatura/clave de estado a clave INEGI de 2 dígitos.
+
+    Tolerante a acentos, mayúsculas, abreviaturas ('GJ', 'Gto', 'Qroo') y
+    prefijos parciales ('guana'). Devuelve None si no hay coincidencia.
+    """
+    cat = cargar_catalogo()
+    e = _norm(estado)
+    if e.isdigit() and len(e) <= 2:
+        return e.zfill(2)
+    exactos = cat.loc[cat["nom_ent_norm"] == e, "ent"].unique()
+    if len(exactos) == 1:
+        return exactos[0]
+    # coincidencia por prefijo (mínimo 3 letras para evitar falsos positivos)
+    if len(e) >= 3:
+        parciales = cat.loc[cat["nom_ent_norm"].str.startswith(e), "ent"].unique()
+        if len(parciales) == 1:
+            return parciales[0]
+    return None
+
+
 def buscar_municipio(nombre: str, estado: str | None = None) -> list[dict]:
     """Busca municipios por nombre (tolerante a acentos/mayúsculas).
 
     Devuelve lista de coincidencias: [{'ent','mun','nom_mun','nom_ent'}]
-    Si `estado` se da, filtra por él (nombre o clave de 2 dígitos).
+    Si `estado` se da, filtra por él (tolerante: nombre, abreviatura o clave).
     """
     cat = cargar_catalogo()
     n = _norm(nombre)
@@ -75,11 +96,15 @@ def buscar_municipio(nombre: str, estado: str | None = None) -> list[dict]:
     if not m.any():
         m = cat["nom_mun_norm"].str.contains(n, regex=False)
     if estado:
-        e = _norm(estado)
-        if e.isdigit() and len(e) == 2:
-            m &= cat["ent"] == e.zfill(2)
-        else:
-            m &= cat["nom_ent_norm"] == e
+        ent = _resolver_estado(estado)
+        if ent is None:
+            # abreviaturas comunes de 2-3 letras que el LLM puede inventar
+            alias = {"gj": "11", "gto": "11", "qroo": "23", "qro": "22", "edomex": "15",
+                     "cdmx": "09", "df": "09", "bc": "02", "bcs": "03"}
+            ent = alias.get(_norm(estado))
+        if ent is None:
+            return []
+        m &= cat["ent"] == ent
     out = cat.loc[m, ["ent", "mun", "nom_mun", "nom_ent"]].to_dict("records")
     return out[:10]
 
