@@ -30,10 +30,14 @@ def _resumen_territorio(df: pd.DataFrame, nombre: str) -> dict:
         "participacion_2024": round(float(df["participacion_2024"].mean()), 1),
         "participacion_2021": round(float(df["participacion_2021"].mean()), 1),
     }
-    # voto 2024 agregado (participación ponderada simple por sección)
-    for partido in P.PARTIDOS:
-        col = f"pct_{partido}_2024"
-        out[f"pct_{partido}_2024"] = round(float(df[col].mean()), 1)
+    # voto 2024 agregado (participación ponderada simple por sección),
+    # ordenado de mayor a menor para que quede claro quién ganó
+    voto24 = {p: round(float(df[f"pct_{p}_2024"].mean()), 1) for p in P.PARTIDOS}
+    ganador = max(voto24, key=voto24.get)
+    out["voto_2024_por_partido_pct"] = dict(sorted(voto24.items(), key=lambda kv: -kv[1]))
+    out["ganador_2024"] = ganador
+    out["nota_ganador"] = (f"El partido con más voto en 2024 fue {ganador.upper()} "
+                            f"({voto24[ganador]}%); los demás van detrás en el orden listado.")
     # tipología
     tip = df["tipologia_2024"].value_counts().to_dict()
     out["tipologia"] = {k: int(v) for k, v in tip.items()}
@@ -42,12 +46,20 @@ def _resumen_territorio(df: pd.DataFrame, nombre: str) -> dict:
         sar = df["categoria_sar"].value_counts().to_dict()
         out["desviacion_sar"] = {k: int(v) for k, v in sar.items()
                                 if k != "sin_sar"}
-    out["margen_2024_promedio_pts"] = round(float(df["margen_2024"].mean()), 1)
-    out["volatilidad_18_24_promedio_pts"] = round(float(df["volatilidad_18_24"].mean()), 1)
-    # socioeconomía (ya en porcentaje)
-    for v in ["pct_rural", "pct_sin_basica", "pct_auto", "pct_internet", "pct_60ymas", "pct_18a24"]:
+    out["margen_2024"] = {"valor_promedio_pts": round(float(df["margen_2024"].mean()), 1),
+                           "definicion": "diferencia en puntos entre el 1er y 2do lugar de la sección"}
+    out["volatilidad_18_24"] = {"valor_promedio_pts": round(float(df["volatilidad_18_24"].mean()), 1),
+                                 "definicion": "cambio absoluto combinado PAN+Morena+MC entre 2018 y 2024, en puntos"}
+    # socioeconomía (ya en porcentaje), con etiquetas explícitas
+    etiquetas = {"pct_rural": "poblacion_rural_pct",
+                 "pct_sin_basica": "sin_educacion_basica_pct",
+                 "pct_auto": "hogares_con_auto_pct",
+                 "pct_internet": "hogares_con_internet_pct",
+                 "pct_60ymas": "poblacion_60ymas_pct",
+                 "pct_18a24": "poblacion_18a24_pct"}
+    for v, nueva in etiquetas.items():
         if v in df:
-            out[v] = round(float(df[v].mean()), 1)
+            out[nueva] = round(float(df[v].mean()), 1)
     return out
 
 
