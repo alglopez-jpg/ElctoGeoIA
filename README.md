@@ -170,12 +170,31 @@ python src/backtest.py && python src/pronostico_2027.py
 jupyter lab notebooks/
 ```
 
+## Fase 5 — SAR explicativo por sección (notebook 07)
+
+El notebook [`notebooks/07_sar_explicativo_secciones.ipynb`](notebooks/07_sar_explicativo_secciones.ipynb)
+ajusta un modelo espacial autorregresivo (SAR vía GM-Lag, N≈53,000 secciones con
+senso completo) del voto a Morena 2024 sobre el perfil socioeconómico de cada
+sección, y usa sus **residuos como herramienta explicativa** (no predictiva):
+
+- **ρ = 0.27**: cada sección "hereda" voto de sus vecinas, controlando por censo
+- pseudo-R² = 0.59 (OLS sin espacio: 0.26)
+- **3,983 secciones sobre-oficialistas** y **3,192 sub-oficialistas** (±1.5 σ,
+  ~±15 pts): territorios donde el voto se desvía de lo que su demografía predice
+- Clusters LISA de residuos: zonas de "máquina territorial" vs. resistencia local
+- Salida: `data/processed/sar_residuales_seccion.csv` (resid, categoria_sar, lisa_resid)
+
+Honestidad metodológica: el backtest (Fase 3) mostró que estos patrones no
+generalizan entre eras políticas; el SAR explica el presente y prioriza terreno,
+no pronostica 2027.
+
 ## Agente experto local (opcional)
 
 El proyecto incluye un **agente conversacional que corre 100% local** (Ollama +
 modelo pequeño) y responde preguntas en lenguaje natural ejecutando el análisis
 real del panel: radiografías por municipio o distrito federal, pronóstico 2027
-por escenario y secciones prioritarias de campaña.
+por escenario, secciones prioritarias de campaña y **mapas PNG del territorio**
+(la cartografía de secciones se descarga sola si falta).
 
 ```powershell
 ollama pull qwen2.5:7b

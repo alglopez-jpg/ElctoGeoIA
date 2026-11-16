@@ -18,3 +18,4 @@ data/upload/*
 !data/upload/.gitkeep
 data/processed/panel_secciones.csv
 data/processed/panel_secciones.gpkg
+salidas_agente/

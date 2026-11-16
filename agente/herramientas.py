@@ -13,6 +13,7 @@ import pandas as pd
 from . import panel as P
 
 ESCENARIOS = ["inercia_intermedia", "oficialismo_resistente", "oposicion_recupera"]
+TIPOS_MAPA_TOOL = ["tipologia", "ganador", "oficialismo", "participacion", "margen"]
 
 
 def _resumen_territorio(df: pd.DataFrame, nombre: str) -> dict:
@@ -153,6 +154,22 @@ def secciones_prioritarias(nombre_municipio: str, estado: str | None = None, top
     }
 
 
+def generar_mapa(nombre_municipio: str | None = None, estado: str | None = None,
+                 tipo: str = "tipologia", escenario: str = "inercia_intermedia",
+                 distrito: int | None = None) -> dict:
+    """Genera un mapa PNG del territorio consultado y devuelve la ruta del archivo.
+
+    Args:
+        tipo: 'tipologia', 'ganador', 'oficialismo', 'participacion' o 'margen'
+        escenario: solo para tipo='oficialismo': 'inercia_intermedia',
+                   'oficialismo_resistente' u 'oposicion_recupera'
+        distrito: si se da, mapea ese distrito federal (con estado)
+    """
+    from . import mapas
+    return mapas.generar_mapa(nombre_municipio=nombre_municipio, estado=estado,
+                              tipo=tipo, escenario=escenario, distrito=distrito)
+
+
 # Registro de herramientas para el orquestador (esquema tipo Ollama/OpenAI tools)
 ESPECIFICACIONES = [
     {
@@ -196,8 +213,9 @@ ESPECIFICACIONES = [
                     "nombre_municipio": {"type": "string"},
                     "estado": {"type": "string"},
                     "escenario": {"type": "string", "enum": ESCENARIOS},
+                    "distrito": {"type": "integer", "description": "Distrito federal (requiere estado); opcional"},
                 },
-                "required": ["nombre_municipio"],
+                "required": [],
             },
         },
     },
@@ -217,6 +235,25 @@ ESPECIFICACIONES = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "generar_mapa",
+            "description": "Genera un mapa PNG del territorio consultado y devuelve la ruta del archivo. Úsala cuando el usuario pida un mapa o cuando la respuesta se beneficie de visualización.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "nombre_municipio": {"type": "string"},
+                    "estado": {"type": "string"},
+                    "tipo": {"type": "string", "enum": TIPOS_MAPA_TOOL,
+                              "description": "tipologia | ganador | oficialismo | participacion | margen"},
+                    "escenario": {"type": "string", "enum": ESCENARIOS},
+                    "distrito": {"type": "integer", "description": "Distrito federal (requiere estado); opcional"},
+                },
+                "required": [],
+            },
+        },
+    },
 ]
 
 FUNCIONES = {
@@ -224,4 +261,5 @@ FUNCIONES = {
     "radiografia_distrito": radiografia_distrito,
     "pronostico_2027": pronostico_2027,
     "secciones_prioritarias": secciones_prioritarias,
+    "generar_mapa": generar_mapa,
 }

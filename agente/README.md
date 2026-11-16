@@ -15,7 +15,8 @@ Tú (pregunta en español)
             ├─ radiografia_municipio()      ← herramientas: código validado del proyecto
             ├─ radiografia_distrito()
             ├─ pronostico_2027()
-            └─ secciones_prioritarias()
+            ├─ secciones_prioritarias()
+            └─ generar_mapa()               ← PNG del territorio en salidas_agente/
                  └─ panel_secciones (71,541 secciones × 150 variables, en RAM)
 ```
 
@@ -41,6 +42,11 @@ argumentos y redacta la respuesta a partir de los resultados reales del panel.
 cd ruta\donde\clonaste\ElctoGeoIA
 pip install -r agente/requisitos.txt
 ```
+
+> La primera vez que uses `generar_mapa`, si no encuentra la cartografía de
+> secciones (`data/upload/mgsan_ext/SECCION.shp`), la descarga automáticamente
+> desde un espejo público del MGS del INE (~86 MB, una sola vez). Requiere
+> `pip install geopandas matplotlib py7zr` además de los requisitos base.
 
 ### 3. Datos
 
@@ -101,7 +107,9 @@ python -m agente.orquestador --modelo llama3.1:8b
 | Archivo | Función |
 |---|---|
 | `agente/panel.py` | Carga del panel y catálogo de municipios (búsqueda tolerante a acentos) |
-| `agente/herramientas.py` | Las 4 herramientas de análisis + especificaciones para el LLM |
+| `agente/herramientas.py` | Las 5 herramientas de análisis + especificaciones para el LLM |
+| `agente/mapas.py` | Quinta herramienta: mapas PNG del territorio (tipología, ganador, pronóstico, participación, margen) |
+| `agente/cartografia.py` | Carga (o descarga automática) del shapefile de secciones del INE |
 | `agente/orquestador.py` | Bucle de chat con Ollama (tool calling) y modo `--demo` |
 | `agente/datos/catalogo_municipios.csv` | Catálogo INEGI de 2,457 municipios (ent, mun, nombres) |
 | `agente/requisitos.txt` | Dependencias (solo pandas + requests-free: urllib de la stdlib) |
