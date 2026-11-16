@@ -73,6 +73,13 @@ def _resolver_estado(estado: str) -> str | None:
     e = _norm(estado)
     if e.isdigit() and len(e) <= 2:
         return e.zfill(2)
+    # abreviaturas comunes de 2-5 letras que el LLM puede inventar
+    alias = {"gj": "11", "gto": "11", "qroo": "23", "qro": "22", "edomex": "15",
+             "cdmx": "09", "df": "09", "bc": "02", "bcs": "03", "nl": "19",
+             "jal": "14", "pue": "21", "mich": "16", "yuc": "31", "chis": "07",
+             "coah": "05", "tamps": "28", "sin": "25", "ver": "30"}
+    if e in alias:
+        return alias[e]
     exactos = cat.loc[cat["nom_ent_norm"] == e, "ent"].unique()
     if len(exactos) == 1:
         return exactos[0]
@@ -97,11 +104,6 @@ def buscar_municipio(nombre: str, estado: str | None = None) -> list[dict]:
         m = cat["nom_mun_norm"].str.contains(n, regex=False)
     if estado:
         ent = _resolver_estado(estado)
-        if ent is None:
-            # abreviaturas comunes de 2-3 letras que el LLM puede inventar
-            alias = {"gj": "11", "gto": "11", "qroo": "23", "qro": "22", "edomex": "15",
-                     "cdmx": "09", "df": "09", "bc": "02", "bcs": "03"}
-            ent = alias.get(_norm(estado))
         if ent is None:
             return []
         m &= cat["ent"] == ent
