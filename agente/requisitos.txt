@@ -1,3 +1,5 @@
 # Dependencias del agente ElctoGeoIA
 # (el chat usa urllib de la biblioteca estándar; solo se requiere pandas)
 pandas>=2.0
+# Opcional, solo para mapas con mapa base de OpenStreetMap (generar_mapa con fondo=True)
+contextily>=1.6  # requiere internet en el momento de generar el mapa
