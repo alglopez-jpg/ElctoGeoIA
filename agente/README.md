@@ -16,7 +16,8 @@ Tú (pregunta en español)
             ├─ radiografia_distrito()
             ├─ pronostico_2027()
             ├─ secciones_prioritarias()
-            └─ generar_mapa()               ← PNG del territorio en salidas_agente/
+            ├─ generar_mapa()               ← PNG del territorio en salidas_agente/
+            │    (fondo=True → mapa base de OpenStreetMap, vía contextily)
                  └─ panel_secciones (71,541 secciones × 150 variables, en RAM)
 ```
 
@@ -47,6 +48,12 @@ pip install -r agente/requisitos.txt
 > secciones (`data/upload/mgsan_ext/SECCION.shp`), la descarga automáticamente
 > desde un espejo público del MGS del INE (~86 MB, una sola vez). Requiere
 > `pip install geopandas matplotlib py7zr` además de los requisitos base.
+>
+> **Mapa base de OpenStreetMap (opcional):** con `pip install contextily` y
+> conexión a internet, `generar_mapa` puede agregar el fondo callejero de OSM
+> (parámetro `fondo=True`; p. ej. "dame el mapa de participación de León sobre
+> OpenStreetMap"). Sin internet o sin contextily, el mapa se genera sin fondo
+> y el resultado incluye una nota explicándolo.
 
 ### 3. Datos
 
@@ -108,7 +115,7 @@ python -m agente.orquestador --modelo llama3.1:8b
 |---|---|
 | `agente/panel.py` | Carga del panel y catálogo de municipios (búsqueda tolerante a acentos) |
 | `agente/herramientas.py` | Las 5 herramientas de análisis + especificaciones para el LLM |
-| `agente/mapas.py` | Quinta herramienta: mapas PNG del territorio (tipología, ganador, pronóstico, participación, margen) |
+| `agente/mapas.py` | Quinta herramienta: mapas PNG del territorio (tipología, ganador, pronóstico, participación, margen) ; `fondo=True` agrega mapa base de OpenStreetMap) |
 | `agente/cartografia.py` | Carga (o descarga automática) del shapefile de secciones del INE |
 | `agente/orquestador.py` | Bucle de chat con Ollama (tool calling) y modo `--demo` |
 | `agente/datos/catalogo_municipios.csv` | Catálogo INEGI de 2,457 municipios (ent, mun, nombres) |
