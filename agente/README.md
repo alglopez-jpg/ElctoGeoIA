@@ -18,6 +18,7 @@ Tú (pregunta en español)
             ├─ secciones_prioritarias()
             ├─ generar_mapa()               ← PNG del territorio en salidas_agente/
             │    (fondo=True → mapa base de OpenStreetMap, vía contextily)
+            └─ generar_visualizador()      ← HTML interactivo (folium) del territorio
                  └─ panel_secciones (71,541 secciones × 150 variables, en RAM)
 ```
 
@@ -117,6 +118,7 @@ python -m agente.orquestador --modelo llama3.1:8b
 | `agente/herramientas.py` | Las 5 herramientas de análisis + especificaciones para el LLM |
 | `agente/mapas.py` | Quinta herramienta: mapas PNG del territorio (tipología, ganador, pronóstico, participación, margen) ; `fondo=True` agrega mapa base de OpenStreetMap) |
 | `agente/cartografia.py` | Carga (o descarga automática) del shapefile de secciones del INE |
+| `agente/visualizador.py` | Sexta herramienta: `generar_visualizador`, HTML interactivo con fichas por sección |
 | `agente/orquestador.py` | Bucle de chat con Ollama (tool calling) y modo `--demo` |
 | `agente/datos/catalogo_municipios.csv` | Catálogo INEGI de 2,457 municipios (ent, mun, nombres) |
 | `agente/requisitos.txt` | Dependencias (solo pandas + requests-free: urllib de la stdlib) |
