@@ -103,7 +103,8 @@ def main():
         tot["pob_15ymas"].replace(0, np.nan)
     ratios["pct_analfabeta"] = 100 * tot["pob15_sin_escolar"] / \
         tot["pob_15ymas"].replace(0, np.nan)
-    ratios["pct_piso_tierra"] = 100 * tot["viv_piso_tierra"] / \
+    ratios["pct_piso_tierra"] = 100 * (tot["viviendas_habitadas"] -
+                                      tot["viv_piso_firme"]) / \
         tot["viviendas_habitadas"].replace(0, np.nan)
     ratios["pct_sin_drenaje"] = 100 * tot["viv_sin_drenaje"] / \
         tot["viviendas_habitadas"].replace(0, np.nan)

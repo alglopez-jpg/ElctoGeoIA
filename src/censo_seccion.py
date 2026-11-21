@@ -32,7 +32,7 @@ VARS_CONTEO = {
     "PEA": "pea",
     "PSINDER": "pob_sin_salud",
     "TVIVHAB": "viviendas_habitadas",
-    "VPH_PISODT": "viv_piso_tierra",
+    "VPH_PISODT": "viv_piso_firme",
     "VPH_NODREN": "viv_sin_drenaje",
     "VPH_S_ELEC": "viv_sin_luz",
     "VPH_AGUAFV": "viv_sin_agua",
@@ -119,7 +119,8 @@ def main():
         censo["pob_15ymas"].replace(0, np.nan)
     ratios["pct_analfabeta"] = 100 * censo["pob15_sin_escolar"] / \
         censo["pob_15ymas"].replace(0, np.nan)
-    ratios["pct_piso_tierra"] = 100 * censo["viv_piso_tierra"] / \
+    ratios["pct_piso_tierra"] = 100 * (censo["viviendas_habitadas"] -
+                                      censo["viv_piso_firme"]) / \
         censo["viviendas_habitadas"].replace(0, np.nan)
     ratios["pct_sin_drenaje"] = 100 * censo["viv_sin_drenaje"] / \
         censo["viviendas_habitadas"].replace(0, np.nan)
