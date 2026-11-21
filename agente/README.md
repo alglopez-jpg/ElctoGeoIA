@@ -101,6 +101,20 @@ funciona bien con 7B (respuestas en segundos). Cambia de modelo con:
 python -m agente.orquestador --modelo llama3.1:8b
 ```
 
+## Publicar los visualizadores como página web (GitHub Pages)
+
+Los visualizadores son HTML estáticos: se abren con doble clic localmente.
+Para servirlos como página web pública:
+
+```powershell
+python -m agente.publicar                  # publica todos los visualizadores
+python -m agente.publicar leon irapuato    # o solo los que quieras
+git add docs/web && git commit -m "web: visualizadores" && git push
+```
+
+Primera vez en github.com: **Settings > Pages > Deploy from a branch > main > /docs > Save**.
+Quedan en `https://<usuario>.github.io/ElctoGeoIA/web/` con un índice generado.
+
 ## Qué NO hace (honestidad metodológica)
 
 - No "predice" con certeza: los escenarios 2027 son composición 2024 + deltas
@@ -119,6 +133,7 @@ python -m agente.orquestador --modelo llama3.1:8b
 | `agente/mapas.py` | Quinta herramienta: mapas PNG del territorio (tipología, ganador, pronóstico, participación, margen) ; `fondo=True` agrega mapa base de OpenStreetMap) |
 | `agente/cartografia.py` | Carga (o descarga automática) del shapefile de secciones del INE |
 | `agente/visualizador.py` | Sexta herramienta: `generar_visualizador`, HTML interactivo con fichas por sección |
+| `agente/publicar.py` | Copia visualizadores a docs/web/ (GitHub Pages) con índice descargable |
 | `agente/orquestador.py` | Bucle de chat con Ollama (tool calling) y modo `--demo` |
 | `agente/datos/catalogo_municipios.csv` | Catálogo INEGI de 2,457 municipios (ent, mun, nombres) |
 | `agente/requisitos.txt` | Dependencias (solo pandas + requests-free: urllib de la stdlib) |
