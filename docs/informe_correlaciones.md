@@ -51,9 +51,36 @@ Lectura: el camino de la competitividad pasa por clases medias urbanas conectada
 
 ---
 
-## 2. Qué explica el voto: ranking multivariado (betas estandarizadas, OLS)
+## 2. Extensión: variables nuevas (segunda iteración del estudio)
 
-### 2.1 Sección (R² Morena 0.26, PAN 0.36, participación 0.25)
+Se ampliaron las variables: **6 indicadores nuevos del Censo 2020** a nivel sección
+(sin secundaria completa, PEA, celular, refrigerador, sin luz, sin agua entubada) y,
+del lado electoral, **PVEM, PT, votos nulos y los cambios de voto 2018→2024**
+(`delta_morena_18_24`, `delta_pan_18_24`). El poder explicativo multivariado subió:
+R² de participación 0.25→0.32, de Morena 0.26→0.27, de PAN 0.36→0.37.
+
+Hallazgos nuevos:
+
+- **PVEM y PT repiten el perfil de Morena** (ρ +0.33/+0.26 con % sin secundaria, −0.37/−0.33 con refrigerador):
+  la coalición de gobierno comparte una misma base social, sin perfiles propios distinguibles.
+- **El voto nulo es un fenómeno del rezago**: % nulos correlaciona con % sin secundaria (ρ +0.47),
+  piso de tierra (+0.37) y negativamente con internet/refrigerador (−0.34/−0.45).
+  La insatisfacción se expresa como abstención estructural y voto de protesta en los mismos territorios.
+- **La polarización se profundizó sobre el mismo eje social**: entre 2018 y 2024, Morena GANÓ
+  donde hay más rezago educativo (delta_morena ρ +0.38 con % sin secundaria, −0.39 con internet)
+  y el PAN ganó donde hay conectividad y adultos mayores (delta_pan ρ +0.42 con internet, +0.27 60ymás).
+  No hubo convergencia: las brechas sociales de 2018 ampliaron las brechas electorales de 2024.
+- **Bienes materiales finos separan mejor que "auto" solo**: el refrigerador es el bien
+  con la correlación más fuerte con el voto PAN (+0.44) y la más negativa con Morena (−0.32)
+  y el voto nulo (−0.45). El celular ya no discrimina (88.9% de cobertura: universal, ρ modesta).
+- **PEA (actividad económica) baja la participación** (ρ −0.25): las secciones con más población
+  económicamente activa votan menos, coherente con jornadas laborales que dificultan la concurrencia.
+- Nota metodológica: % sin básica y % sin secundaria están colineales (r=0.986); el ranking
+  multivariado usa solo la primera (la segunda se reporta en el heatmap Spearman).
+
+## 3. Qué explica el voto (betas estandarizadas, OLS)
+
+### 3.1 Sección (R² Morena 0.27, PAN 0.37, participación 0.32)
 
 - **Morena:** −auto (−0.35), −60ymás (−0.23), −internet (−0.15), −analfabetismo (−0.15), +sin básica (+0.11).
 - **PAN:** +auto (+0.30), +internet (+0.28), +60ymás (+0.25), +analfabetismo (+0.14).
@@ -61,7 +88,7 @@ Lectura: el camino de la competitividad pasa por clases medias urbanas conectada
 
 ᵃNota metodológica: el analfabetismo sube la participación controlando el resto —residual de voto duro en zonas rurales adultas—, mientras que la falta de básica la baja. Ambos efectos simultáneos solo se ven con análisis multivariado.
 
-### 2.2 Municipio (R² Sheinbaum 0.27, Gálvez 0.17, participación 0.18)
+### 3.2 Municipio (R² Sheinbaum 0.27, Gálvez 0.17, participación 0.18)
 
 - **Sheinbaum:** +ingresos bajos (+0.48), +piso de tierra (+0.31), −sin básica (−0.23), −im_2020 (−0.21; mayor índice = mejores condiciones).
 - **Gálvez:** −ingresos bajos (−0.42), −piso de tierra (−0.30), +im_2020 (+0.30; mejores condiciones).
@@ -71,7 +98,7 @@ La contradicción aparente (participación baja donde hay piso de tierra, pero a
 
 ---
 
-## 3. Implicaciones operativas
+## 4. Implicaciones operativas
 
 1. **Para campañas:** el targeting socioeconómico más eficiente es conectividad/bienes (internet, auto) y estructura educativa, no ruralidad per se. La variable nueva **densidad de sección** permite priorizar territorio urbano denso con bajo costo operativo.
 2. **Para el análisis 2027:** el modelo de swing territorial y su backtest fueron re-entrenados con el panel corregido en esta misma entrega (`backtest.py` → `pronostico_2027.py` → panel reconstruido). El pronóstico por sección no cambia (depende solo de votos: MAE backtest 35.43% vs swing uniforme 26.60%, mismo ordenamiento); los semianchos conformales se recalibraron marginalmente (p. ej. morena 19.1→19.3 pts). El modelo SAR del notebook 07 también fue re-entrenado con el panel corregido (iguales especificación y datos de entrada): ρ 0.270→0.249, pseudo-R² 0.589→0.568; las categorías de residuo son prácticamente idénticas (en_lo_esperado 45,801→45,797; sobre 3,983→3,988; sub 3,192→3,191 de 52,976 secciones), lo que confirma que la radiografía de secciones sobre/sub-performantes es robusta a la corrección del indicador.
@@ -79,7 +106,7 @@ La contradicción aparente (participación baja donde hay piso de tierra, pero a
 
 ---
 
-## 4. Archivos reproducibles
+## 5. Archivos reproducibles
 
 | Archivo | Contenido |
 |---|---|

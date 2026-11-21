@@ -120,6 +120,20 @@ def main():
         tot["pob_total"].replace(0, np.nan)
     ratios["pct_18a24"] = 100 * tot["pob_18a24"] / \
         tot["pob_total"].replace(0, np.nan)
+    ratios["pct_sin_secundaria"] = 100 * (tot["pob15_sin_escolar"] +
+                                          tot["pob15_primaria_incompleta"] +
+                                          tot["pob15_secundaria_incompleta"]) / \
+        tot["pob_15ymas"].replace(0, np.nan)
+    ratios["pct_pea"] = 100 * tot["pea"] / \
+        tot["pob_15ymas"].replace(0, np.nan)
+    ratios["pct_celular"] = 100 * tot["viv_celular"] / \
+        tot["viviendas_habitadas"].replace(0, np.nan)
+    ratios["pct_refri"] = 100 * tot["viv_refri"] / \
+        tot["viviendas_habitadas"].replace(0, np.nan)
+    ratios["pct_sin_luz"] = 100 * tot["viv_sin_luz"] / \
+        tot["viviendas_habitadas"].replace(0, np.nan)
+    ratios["pct_sin_agua"] = 100 * tot["viv_sin_agua"] / \
+        tot["viviendas_habitadas"].replace(0, np.nan)
     ratios.to_csv(os.path.join(
         PROCESSED, "censo2020_seccion_indicadores_total.csv"))
     print(f"    secciones con censo: {ratios['pob_total'].gt(0).sum():,}")

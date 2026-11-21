@@ -136,6 +136,20 @@ def main():
         censo["pob_total"].replace(0, np.nan)
     ratios["pct_18a24"] = 100 * censo["pob_18a24"] / \
         censo["pob_total"].replace(0, np.nan)
+    ratios["pct_sin_secundaria"] = 100 * (censo["pob15_sin_escolar"] +
+                                          censo["pob15_primaria_incompleta"] +
+                                          censo["pob15_secundaria_incompleta"]) / \
+        censo["pob_15ymas"].replace(0, np.nan)
+    ratios["pct_pea"] = 100 * censo["pea"] / \
+        censo["pob_15ymas"].replace(0, np.nan)
+    ratios["pct_celular"] = 100 * censo["viv_celular"] / \
+        censo["viviendas_habitadas"].replace(0, np.nan)
+    ratios["pct_refri"] = 100 * censo["viv_refri"] / \
+        censo["viviendas_habitadas"].replace(0, np.nan)
+    ratios["pct_sin_luz"] = 100 * censo["viv_sin_luz"] / \
+        censo["viviendas_habitadas"].replace(0, np.nan)
+    ratios["pct_sin_agua"] = 100 * censo["viv_sin_agua"] / \
+        censo["viviendas_habitadas"].replace(0, np.nan)
     ratios.to_csv(os.path.join(PROCESSED, "censo2020_seccion_indicadores.csv"))
     print(f"Indicadores: {ratios.shape}")
 
