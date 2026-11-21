@@ -19,6 +19,19 @@ SALIDAS = os.path.join(RAIZ, "salidas_agente")
 
 TIPOS_MAPA = ["tipologia", "ganador", "oficialismo", "participacion", "margen"]
 
+_UA_OSM = {"User-Agent": "ElctoGeoIA-agente/1.0 (https://github.com/alglopez-jpg/ElctoGeoIA)"}
+
+
+def _fondo_disponible() -> str | None:
+    """Importa contextily; devuelve mensaje de error si no está disponible."""
+    try:
+        import contextily  # noqa: F401
+        return None
+    except ImportError:
+        return ("contextily no está instalado (pip install contextily); "
+                "genero el mapa sin fondo.")
+
+
 _COLORES_GANADOR = {
     "morena": "#8f1c1c", "pan": "#2255aa", "pri": "#11aa44",
     "otros": "#888888", "empate": "#cccccc",
@@ -66,14 +79,28 @@ def _guardar(fig, nombre_archivo: str) -> str:
     return ruta
 
 
+def _agregar_fondo(ax, nota: list[str]):
+    """Superpone el mapa base de OpenStreetMap; degrada en silencio si falla."""
+    try:
+        import contextily as ctx
+        ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik,
+                        headers=_UA_OSM)
+    except Exception as e:
+        nota.append(f"No pude descargar el mapa base de OpenStreetMap ({e}); "
+                    "el mapa quedó sin fondo. Revisa tu conexión.")
+
+
 def generar_mapa(nombre_municipio: str | None = None, estado: str | None = None,
                  distrito: int | None = None, tipo: str = "tipologia",
-                 escenario: str = "inercia_intermedia") -> dict:
+                 escenario: str = "inercia_intermedia",
+                 fondo: bool = False) -> dict:
     """Genera un mapa PNG del territorio consultado.
 
     Args:
         tipo: 'tipologia', 'ganador', 'oficialismo', 'participacion' o 'margen'
         escenario: escenario 2027 (solo aplica a 'oficialismo' y 'margen')
+        fondo: si True, agrega mapa base de OpenStreetMap (requiere internet y
+               contextily); si no está disponible, el mapa se genera sin fondo
     """
     tipo = tipo.strip().lower()
     if tipo not in TIPOS_MAPA:
@@ -83,6 +110,16 @@ def generar_mapa(nombre_municipio: str | None = None, estado: str | None = None,
         return {"error": err}
     if geo is None or geo.empty:
         return {"error": "Sin geometría o datos para ese territorio."}
+
+    nota: list[str] = []
+    alpha_fondo = 1.0
+    if fondo:
+        err_ctx = _fondo_disponible()
+        if err_ctx:
+            nota.append(err_ctx)
+        else:
+            geo = geo.to_crs(epsg=3857)
+            alpha_fondo = 0.78
 
     geo["geometry"] = geo.geometry.simplify(0.001)
     fig, ax = plt.subplots(figsize=(8, 8))
@@ -94,14 +131,15 @@ def generar_mapa(nombre_municipio: str | None = None, estado: str | None = None,
         for c in cats:
             g = geo[geo["tipologia_2024"] == c]
             if len(g):
-                g.plot(ax=ax, color=colores[c], label=c.replace("_", " "), linewidth=0.1)
+                g.plot(ax=ax, color=colores[c], label=c.replace("_", " "),
+                       linewidth=0.1, alpha=alpha_fondo)
         ax.legend(title="Tipología 2024", loc="lower left", fontsize=8)
         titulo = "Tipología de secciones 2024"
     elif tipo == "ganador":
         for g_ in geo["ganador_2024"].dropna().unique():
             g = geo[geo["ganador_2024"] == g_]
             g.plot(ax=ax, color=_COLORES_GANADOR.get(g_, "#888888"), label=g_,
-                   linewidth=0.1)
+                   linewidth=0.1, alpha=alpha_fondo)
         ax.legend(title="Ganador 2024", loc="lower left", fontsize=8)
         titulo = "Ganador por sección, 2024"
     elif tipo == "oficialismo":
@@ -110,22 +148,31 @@ def generar_mapa(nombre_municipio: str | None = None, estado: str | None = None,
             return {"error": f"Escenario inválido para 'oficialismo': {escenario}"}
         geo[col] = geo[col] * 100
         geo.plot(column=col, ax=ax, cmap="RdBu_r", legend=True, linewidth=0.1,
+                 alpha=alpha_fondo,
                  legend_kwds={"label": "% voto Morena 2027", "shrink": 0.7})
         titulo = f"Pronóstico 2027 · voto al oficialismo ({escenario})"
     elif tipo == "participacion":
         geo.plot(column="participacion_2024", ax=ax, cmap="viridis", legend=True,
-                 linewidth=0.1,
+                 linewidth=0.1, alpha=alpha_fondo,
                  legend_kwds={"label": "% participación 2024", "shrink": 0.7})
         titulo = "Participación 2024"
     else:  # margen
         geo.plot(column="margen_2024", ax=ax, cmap="plasma", legend=True, linewidth=0.1,
+                 alpha=alpha_fondo,
                  legend_kwds={"label": "margen (pts) 2024", "shrink": 0.7})
         titulo = "Margen de victoria 2024"
 
+    if fondo and alpha_fondo < 1.0:
+        _agregar_fondo(ax, nota)
     ax.set_title(f"{titulo}\n{df['id'].iloc[0][:2]} · {nombre.split('_', 1)[-1] if '_' in nombre else nombre}",
                  fontsize=11)
     ax.set_axis_off()
-    archivo = f"mapa_{nombre}_{tipo}.png"
+    sufijo = "_osm" if fondo and alpha_fondo < 1.0 else ""
+    archivo = f"mapa_{nombre}_{tipo}{sufijo}.png"
     ruta = _guardar(fig, archivo)
-    return {"mapa": os.path.relpath(ruta, RAIZ), "secciones": int(len(geo)),
-            "tipo": tipo, "escenario": escenario if tipo == "oficialismo" else None}
+    resultado = {"mapa": os.path.relpath(ruta, RAIZ), "secciones": int(len(geo)),
+                "tipo": tipo, "fondo": "OpenStreetMap" if fondo and not nota else None,
+                "escenario": escenario if tipo == "oficialismo" else None}
+    if nota:
+        resultado["nota"] = " ".join(nota)
+    return resultado

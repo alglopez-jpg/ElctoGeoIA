@@ -186,7 +186,7 @@ def secciones_prioritarias(nombre_municipio: str, estado: str | None = None, top
 
 def generar_mapa(nombre_municipio: str | None = None, estado: str | None = None,
                  tipo: str = "tipologia", escenario: str = "inercia_intermedia",
-                 distrito: int | None = None) -> dict:
+                 distrito: int | None = None, fondo: bool = False) -> dict:
     """Genera un mapa PNG del territorio consultado y devuelve la ruta del archivo.
 
     Args:
@@ -194,10 +194,13 @@ def generar_mapa(nombre_municipio: str | None = None, estado: str | None = None,
         escenario: solo para tipo='oficialismo': 'inercia_intermedia',
                    'oficialismo_resistente' u 'oposicion_recupera'
         distrito: si se da, mapea ese distrito federal (con estado)
+        fondo: si True, agrega mapa base de OpenStreetMap (requiere internet
+               y la librería opcional contextily)
     """
     from . import mapas
     return mapas.generar_mapa(nombre_municipio=nombre_municipio, estado=estado,
-                              tipo=tipo, escenario=escenario, distrito=distrito)
+                              tipo=tipo, escenario=escenario, distrito=distrito,
+                              fondo=fondo)
 
 
 # Registro de herramientas para el orquestador (esquema tipo Ollama/OpenAI tools)
@@ -279,6 +282,8 @@ ESPECIFICACIONES = [
                               "description": "tipologia | ganador | oficialismo | participacion | margen"},
                     "escenario": {"type": "string", "enum": ESCENARIOS},
                     "distrito": {"type": "integer", "description": "Distrito federal (requiere estado); opcional"},
+                    "fondo": {"type": "boolean",
+                              "description": "Agregar mapa base de OpenStreetMap al PNG. Requiere internet (y contextily); si no hay, se genera sin fondo. Úsalo cuando el usuario pida contexto callejero o 'sobre el mapa de OSM'."},
                 },
                 "required": [],
             },
