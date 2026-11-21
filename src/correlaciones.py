@@ -36,14 +36,18 @@ FIGURAS = os.path.join(BASE, "figuras")
 SALIDAS = os.path.join(PROCESSED, "correlaciones")
 
 VOTO_SEC = ["pct_morena_2024", "pct_pan_2024", "pct_pri_2024", "pct_mc_2024",
-            "pct_prd_2024", "participacion_2024", "margen_2024",
-            "volatilidad_18_24"]
-SOC_SEC = ["pct_sin_basica", "pct_analfabeta", "pct_piso_tierra", "pct_sin_drenaje",
-           "pct_sin_bienes", "pct_auto", "pct_internet", "pct_sin_salud",
-           "pct_60ymas", "pct_18a24", "pct_rural", "densidad_sec"]
-X_SEC = ["pct_sin_basica", "pct_analfabeta", "pct_piso_tierra", "pct_sin_drenaje",
-         "pct_sin_salud", "pct_auto", "pct_internet", "pct_60ymas", "pct_18a24",
-         "pct_rural", "densidad_sec"]
+            "pct_prd_2024", "pct_pvem_2024", "pct_pt_2024", "participacion_2024",
+            "pct_nulos_2024", "margen_2024", "volatilidad_18_24",
+            "delta_morena_18_24", "delta_pan_18_24"]
+SOC_SEC = ["pct_sin_basica", "pct_sin_secundaria", "pct_analfabeta", "pct_pea",
+           "pct_piso_tierra", "pct_sin_drenaje", "pct_sin_luz", "pct_sin_agua",
+           "pct_sin_bienes", "pct_auto", "pct_refri", "pct_celular",
+           "pct_internet", "pct_sin_salud", "pct_60ymas", "pct_18a24",
+           "pct_rural", "densidad_sec"]
+X_SEC = ["pct_sin_basica", "pct_pea", "pct_piso_tierra",
+         "pct_sin_luz", "pct_sin_agua", "pct_auto", "pct_refri", "pct_celular",
+         "pct_internet", "pct_60ymas", "pct_18a24", "pct_rural",
+         "densidad_sec"]
 VOTO_MUN = ["pct_sheinbaum", "pct_galvez", "pct_maynez", "pct_participacion"]
 SOC_MUN = ["pct_analfabeta", "pct_sin_basica", "pct_sin_drenaje",
            "pct_sin_electricidad", "pct_sin_agua", "pct_piso_tierra",
@@ -65,6 +69,10 @@ def cargar_secciones():
     sec["area_km2"] = sec.to_crs(6372).area / 1e6
     p = panel.merge(sec[["id", "area_km2"]].copy(), on="id", how="inner")
     p["densidad_sec"] = p["pob_total"] / p["area_km2"].replace(0, np.nan)
+    p["delta_morena_18_24"] = p["pct_morena_2024"] - p["pct_morena_2018"]
+    p["delta_pan_18_24"] = p["pct_pan_2024"] - p["pct_pan_2018"]
+    p["pct_nulos_2024"] = 100 * p["nulos_2024"] / \
+        p["total_votos_2024"].replace(0, np.nan)
     return p
 
 
