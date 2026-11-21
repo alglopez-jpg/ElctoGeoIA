@@ -74,7 +74,7 @@ La contradicción aparente (participación baja donde hay piso de tierra, pero a
 ## 3. Implicaciones operativas
 
 1. **Para campañas:** el targeting socioeconómico más eficiente es conectividad/bienes (internet, auto) y estructura educativa, no ruralidad per se. La variable nueva **densidad de sección** permite priorizar territorio urbano denso con bajo costo operativo.
-2. **Para el análisis 2027:** el panel ya corregido cambia el signo de `pct_piso_tierra` en los modelos entrenados (el modelo SAR y el pronóstico existente lo aprendieron con el indicador invertido); se recomienda re-entrenarlos con el panel corregido antes de usarlos operativamente.
+2. **Para el análisis 2027:** el modelo de swing territorial y su backtest fueron re-entrenados con el panel corregido en esta misma entrega (`backtest.py` → `pronostico_2027.py` → panel reconstruido). El pronóstico por sección no cambia (depende solo de votos: MAE backtest 35.43% vs swing uniforme 26.60%, mismo ordenamiento); los semianchos conformales se recalibraron marginalmente (p. ej. morena 19.1→19.3 pts). El modelo SAR del notebook 07 permanece con el indicador antiguo (se recomienda re-ejecutarlo como seguimiento).
 3. **Voto joven:** consistente con la literatura, % 18-24 se asocia con menor participación (ρ −0.25); memiliki oportunidad de movilización en secciones jóvenes urbanas con alta conectividad.
 
 ---
