@@ -203,6 +203,23 @@ def generar_mapa(nombre_municipio: str | None = None, estado: str | None = None,
                               fondo=fondo)
 
 
+def generar_visualizador(nombre_municipio: str | None = None, estado: str | None = None,
+                         distrito: int | None = None, criterio: str = "tipologia") -> dict:
+    """Genera un visualizador HTML interactivo del territorio consultado.
+
+    Args:
+        criterio: coloreado de secciones: 'tipologia', 'ganador' o
+            'participacion'; la ficha por sección incluye población, lista
+            nominal, votos por partido, participación y condición
+        distrito: si se da, visualiza ese distrito federal (con estado)
+    """
+    from . import visualizador
+    return visualizador.generar_visualizador(
+        nombre_municipio=nombre_municipio, estado=estado, distrito=distrito,
+        criterio=criterio)
+
+
+
 # Registro de herramientas para el orquestador (esquema tipo Ollama/OpenAI tools)
 ESPECIFICACIONES = [
     {
@@ -271,6 +288,25 @@ ESPECIFICACIONES = [
     {
         "type": "function",
         "function": {
+            "name": "generar_visualizador",
+            "description": "Genera un visualizador HTML interactivo del territorio (secciones clicables sobre OpenStreetMap, con ficha por sección: población, lista nominal, votos por partido, participación y tipología). Úsalo cuando el usuario pida explorar o consultar el mapa de forma interactiva.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "nombre_municipio": {"type": "string"},
+                    "estado": {"type": "string"},
+                    "distrito": {"type": "integer", "description": "Distrito federal (requiere estado); opcional"},
+                    "criterio": {"type": "string",
+                                 "enum": ["tipologia", "ganador", "participacion"],
+                                 "description": "criterio de coloreado de las secciones"},
+                },
+                "required": [],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "generar_mapa",
             "description": "Genera un mapa PNG del territorio consultado y devuelve la ruta del archivo. Úsala cuando el usuario pida un mapa o cuando la respuesta se beneficie de visualización.",
             "parameters": {
@@ -297,4 +333,5 @@ FUNCIONES = {
     "pronostico_2027": pronostico_2027,
     "secciones_prioritarias": secciones_prioritarias,
     "generar_mapa": generar_mapa,
+    "generar_visualizador": generar_visualizador,
 }

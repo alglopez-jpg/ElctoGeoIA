@@ -3,3 +3,5 @@
 pandas>=2.0
 # Opcional, solo para mapas con mapa base de OpenStreetMap (generar_mapa con fondo=True)
 contextily>=1.6  # requiere internet en el momento de generar el mapa
+# Opcional, para el visualizador HTML interactivo (generar_visualizador)
+folium>=0.16
