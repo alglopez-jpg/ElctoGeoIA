@@ -109,11 +109,11 @@ Para servirlos como página web pública:
 ```powershell
 python -m agente.publicar                  # publica todos los visualizadores
 python -m agente.publicar leon irapuato    # o solo los que quieras
-git add docs/web && git commit -m "web: visualizadores" && git push
+git add docs && git commit -m "web: visualizadores" && git push
 ```
 
 Primera vez en github.com: **Settings > Pages > Deploy from a branch > main > /docs > Save**.
-Quedan en `https://<usuario>.github.io/ElctoGeoIA/web/` con un índice generado.
+Quedan en `https://<usuario>.github.io/ElctoGeoIA/` con un índice generado.
 
 ## Qué NO hace (honestidad metodológica)
 
