@@ -9,7 +9,7 @@ Pages los sirva como sitio estático. Uso:
 Pasos activación (solo la primera vez, en github.com):
     Settings > Pages > Deploy from a branch > main > /docs > Save
 
-La página queda en https://alglopez-jpg.github.io/ElctoGeoIA/web/
+La página queda en https://alglopez-jpg.github.io/ElctoGeoIA/
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ import sys
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SALIDAS = os.path.join(RAIZ, "salidas_agente")
-DESTINO = os.path.join(RAIZ, "docs", "web")
+DESTINO = os.path.join(RAIZ, "docs")
 
 INDICE = """<!doctype html>
 <html lang="es"><head><meta charset="utf-8">
